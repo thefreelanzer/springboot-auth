@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     @GetMapping("/user/check")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<String> userAccess() {
         return ResponseEntity.ok("Welcome, USER! You have user-level access.");
     }
 
     @GetMapping("/admin/check")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> adminAccess() {
         return ResponseEntity.ok("Welcome, ADMIN! You have admin-level access.");
     }
