@@ -37,8 +37,10 @@ public class SecurityConfiguration {
         httpSecurity
                 .csrf(csrf -> csrf.disable()) // Use lambda syntax to disable CSRF
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST,"/api/v1/auth/**").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll() // Permit authentication endpoints
+                        .requestMatchers(HttpMethod.GET, "/api/v1/users/user/**").hasRole("USER") // Only accessible by ADMIN
+                        .requestMatchers(HttpMethod.GET, "/api/v1/users/admin/**").hasAnyRole("USER", "ADMIN") // Accessible by both USER and ADMIN
+                        .anyRequest().authenticated() // Secure other endpoints
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

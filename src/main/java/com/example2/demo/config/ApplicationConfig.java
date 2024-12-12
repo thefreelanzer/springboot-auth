@@ -1,6 +1,7 @@
 package com.example2.demo.config;
 
 import com.example2.demo.repository.UserRepository;
+import com.example2.demo.service.CustomUserDetailsService;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +20,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class ApplicationConfig {
 
     private final UserRepository userRepository;
+    private final CustomUserDetailsService customUserDetailsService;
 
-    public ApplicationConfig(UserRepository userRepository) {
+    public ApplicationConfig(UserRepository userRepository, CustomUserDetailsService customUserDetailsService) {
         this.userRepository = userRepository;
+        this.customUserDetailsService = customUserDetailsService;
     }
 
     @Bean
@@ -34,9 +37,10 @@ public class ApplicationConfig {
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService());
+        //authProvider.setUserDetailsService(userDetailsService());
+        authProvider.setUserDetailsService(customUserDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
-        return  authProvider;
+        return authProvider;
     }
 
     @Bean
