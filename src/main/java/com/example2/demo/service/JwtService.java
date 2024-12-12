@@ -98,9 +98,10 @@ public class JwtService {
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRY_TIME))
-                .claim("roles", userDetails.getAuthorities().stream()
+                .claim("role", "ROLE_" + userDetails.getAuthorities().stream()
+                        .findFirst() // As there will be only one role, pick the first one
                         .map(GrantedAuthority::getAuthority)
-                        .collect(Collectors.joining(","))) // Add roles to the token
+                        .orElse(null)) // If no role is found, return null
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -112,9 +113,17 @@ public class JwtService {
      * @param userDetails the user details to validate against
      * @return true if the token is valid, false otherwise
      */
-    public boolean isValidToken(String token, UserDetails userDetails){
+
+    /*public boolean isValidToken(String token, UserDetails userDetails){
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+    }*/
+    public boolean isValidToken(String token, UserDetails userDetails) {
+        final String username = extractUsername(token);
+        final String role = extractClaim(token, claims -> claims.get("role", String.class));
+
+        // Check if the username matches and if the role is correct (optional, depending on your logic)
+        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token) && role != null;
     }
 
     /**

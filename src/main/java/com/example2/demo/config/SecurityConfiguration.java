@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -16,6 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration {
 
     // Custom JWT authentication filter to process and validate JWT tokens
@@ -38,8 +40,8 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable()) // Use lambda syntax to disable CSRF
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll() // Permit authentication endpoints
-                        .requestMatchers(HttpMethod.GET, "/api/v1/users/user/**").hasRole("USER") // Only accessible by ADMIN
-                        .requestMatchers(HttpMethod.GET, "/api/v1/users/admin/**").hasAnyRole("USER", "ADMIN") // Accessible by both USER and ADMIN
+                        .requestMatchers(HttpMethod.GET, "/api/v1/users/user/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/users/admin/**").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated() // Secure other endpoints
                 )
                 .sessionManagement(session -> session
