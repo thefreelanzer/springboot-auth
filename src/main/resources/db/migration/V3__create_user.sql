@@ -1,5 +1,3 @@
-DROP TABLE user;
-
 CREATE TABLE user (
     id INT AUTO_INCREMENT PRIMARY KEY,
     firstname VARCHAR(255) NOT NULL,

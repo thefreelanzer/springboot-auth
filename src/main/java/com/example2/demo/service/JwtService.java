@@ -17,7 +17,7 @@ import java.util.Map;
 public class JwtService {
 
     // Secret key for signing and verifying JWTs (Base64-encoded)
-    private static final String SECRET_KEY = "Nc1FVaB5HpmNLqfGdh3kPo7mPjTW0ptZ";
+    private static final String SECRET_KEY = "J1pUaSLrDyiUeMfKMHsNLkRKtkSxrV167mCeGmigTwc=";
 
     /**
      * Extracts the username from the given JWT token.
@@ -92,7 +92,7 @@ public class JwtService {
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
-                .signWith(getSignInKey(), SignatureAlgorithm.ES256)
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
