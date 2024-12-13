@@ -16,13 +16,22 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthenticationService {
 
+    // Dependencies injected through constructor
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
+    /**
+     * Handles user registration by creating a new user, encoding their password,
+     * assigning a default role, and generating a JWT token.
+     *
+     * @param request contains registration details like first name, last name, email, and password
+     * @return AuthenticationResponse containing the generated JWT token
+     */
     public AuthenticationResponse register(RegisterRequest request) {
 
+        // Create and populate a new User entity
         var user = new User();
         user.setFirstname(request.getFirstname());
         user.setLastname(request.getLastname());
@@ -31,18 +40,27 @@ public class AuthenticationService {
         user.setRole(Role.USER);
 
         userRepository.save(user);
-        System.out.println(user);
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
     }
 
+    /**
+     * Handles user authentication by validating their credentials and generating a JWT token.
+     *
+     * @param request contains login credentials (email and password)
+     * @return AuthenticationResponse containing the generated JWT token
+     */
     public AuthenticationResponse authenticate(AuthenticateRequest request) {
+
+        // Authenticate the user using the authentication manager
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
+        // Fetch the user from the database
         var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
-        System.out.println(user);
+
+        // Generate JWT token for the authenticated user
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
